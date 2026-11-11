@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    // Theme initialization: dark mode preference (prevents theme flicker)
+    (function() {
+      const savedTheme = localStorage.getItem('aura_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create an Account — Aura Weather Telemetry</title>
@@ -57,7 +69,7 @@
     }
   </style>
 </head>
-<body class="font-sans text-on-surface antialiased selection:bg-primary-fixed selection:text-primary min-h-screen flex flex-col justify-center items-center p-3 sm:p-6 lg:p-8">
+<body class="font-sans text-on-surface dark:text-[#F3F4F6] dark:bg-[#0B0F19] antialiased selection:bg-primary-fixed selection:text-primary min-h-screen flex flex-col justify-center items-center p-3 sm:p-6 lg:p-8 transition-colors duration-300">
 
   <!-- Existing Session Banner (If user is already registered) -->
   <div id="session-banner" class="w-full max-w-5xl mb-3 hidden">
@@ -76,10 +88,10 @@
   </div>
 
   <!-- Main Card Container: Fluid Responsive Double-Split Card -->
-  <div class="w-full max-w-5xl bg-surface-container-low rounded-[24px] sm:rounded-[36px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] p-3 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 border border-white/80">
+  <div class="w-full max-w-5xl bg-surface-container-low dark:bg-[#111827] rounded-[24px] sm:rounded-[36px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-3 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 border border-white/80 dark:border-slate-800 transition-colors duration-300">
 
     <!-- Left Column: Registration Form Card -->
-    <div class="w-full lg:w-7/12 bg-surface-container-lowest rounded-[20px] sm:rounded-[28px] p-4 sm:p-7 md:p-8 shadow-sm flex flex-col justify-between border border-surface-container">
+    <div class="w-full lg:w-7/12 bg-surface-container-lowest dark:bg-[#161F30] rounded-[20px] sm:rounded-[28px] p-4 sm:p-7 md:p-8 shadow-sm flex flex-col justify-between border border-surface-container dark:border-slate-800 transition-colors duration-300">
       <div>
         
         <!-- Header Branding & Security Badge -->

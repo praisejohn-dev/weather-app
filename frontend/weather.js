@@ -138,13 +138,33 @@
       rainBars.style.display = info.isRain ? 'flex' : 'none';
     }
 
-    // Dynamic Sky Backdrop for City Capsule
+    // Dynamic Sky Backdrop for Hero Temperature Weather Card
+    const heroSky = document.getElementById('hero-weather-sky');
+    const isNight = current.is_day === 0;
+    if (heroSky) {
+      heroSky.className = isNight
+        ? 'absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-800 transition-all duration-700'
+        : `absolute inset-0 bg-gradient-to-br ${info.sky} transition-all duration-700`;
+    }
+
     const citySky = document.getElementById('city-card-sky');
     if (citySky) {
-      const isNight = current.is_day === 0;
       citySky.className = isNight
         ? 'w-full h-full bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-800 transition-all duration-700'
         : `w-full h-full bg-gradient-to-tr ${info.sky} transition-all duration-700`;
+    }
+
+    const condIcon = document.getElementById('hero-condition-icon');
+    if (condIcon) condIcon.textContent = isNight ? 'nights_stay' : info.icon;
+
+    const orbIcon = document.getElementById('hero-orb-icon');
+    if (orbIcon) orbIcon.textContent = isNight ? 'nights_stay' : info.icon;
+
+    const orbSun = document.getElementById('hero-orb-sun');
+    if (orbSun) {
+      orbSun.className = isNight
+        ? 'w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-400 via-purple-500 to-slate-300 shadow-[0_0_30px_rgba(167,139,250,0.55)] flex items-center justify-center transition-all duration-700'
+        : 'w-20 h-20 rounded-full bg-gradient-to-tr from-amber-300 via-amber-400 to-yellow-200 shadow-[0_0_30px_rgba(255,215,0,0.55)] flex items-center justify-center transition-all duration-700';
     }
 
     // Precipitation probability
@@ -362,17 +382,17 @@
       const card = document.createElement('div');
       // Responsive flex-shrink on mobile for horizontal swiping, grid cell on sm+
       card.className = isSelected
-        ? 'flex-shrink-0 min-w-[95px] sm:min-w-0 bg-surface-container-lowest rounded-2xl p-4 flex flex-col items-center justify-between text-center shadow-[0_8px_24px_rgba(0,0,0,0.06)] ring-2 ring-primary/30 cursor-pointer transition-all scale-[1.02]'
-        : 'flex-shrink-0 min-w-[95px] sm:min-w-0 bg-surface-container-lowest rounded-2xl p-4 flex flex-col items-center justify-between text-center shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all cursor-pointer group';
+        ? 'flex-shrink-0 min-w-[95px] sm:min-w-0 bg-surface-container-lowest dark:bg-slate-800 rounded-2xl p-4 flex flex-col items-center justify-between text-center shadow-[0_8px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] ring-2 ring-primary dark:ring-primary-container border border-transparent dark:border-slate-700 cursor-pointer transition-all scale-[1.02]'
+        : 'flex-shrink-0 min-w-[95px] sm:min-w-0 bg-surface-container-lowest dark:bg-slate-800/80 rounded-2xl p-4 flex flex-col items-center justify-between text-center shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] border border-transparent dark:border-slate-700/50 hover:dark:bg-slate-800 transition-all cursor-pointer group';
 
       card.innerHTML = `
-        <span class="font-body-sm text-body-sm ${isSelected ? 'font-bold text-on-surface' : 'font-semibold text-outline group-hover:text-on-surface transition-colors'}">${dayLabel}</span>
-        <div class="my-3 w-10 h-10 rounded-full flex items-center justify-center ${info.isRain ? 'bg-primary-container/15 text-primary' : 'bg-amber-100 text-amber-500'}">
+        <span class="font-body-sm text-body-sm ${isSelected ? 'font-bold text-on-surface dark:text-white' : 'font-semibold text-outline dark:text-slate-400 group-hover:text-on-surface dark:group-hover:text-white transition-colors'}">${dayLabel}</span>
+        <div class="my-3 w-10 h-10 rounded-full flex items-center justify-center ${info.isRain ? 'bg-primary-container/15 text-primary dark:bg-primary-container/30 dark:text-primary-fixed' : 'bg-amber-100 text-amber-500 dark:bg-amber-950/40 dark:text-amber-400'}">
           <span class="material-symbols-outlined text-[24px]">${info.icon}</span>
         </div>
         <div class="flex items-center gap-1.5 font-label-sm text-label-sm">
-          <span class="font-semibold text-on-surface">${maxT}°</span>
-          <span class="text-outline">${minT}°</span>
+          <span class="font-semibold text-on-surface dark:text-white">${maxT}°</span>
+          <span class="text-outline dark:text-slate-400">${minT}°</span>
         </div>
       `;
 
@@ -406,12 +426,12 @@
       const precip = hourly.precipitation_probability ? hourly.precipitation_probability[i] : 0;
 
       const slot = document.createElement('div');
-      slot.className = 'flex-shrink-0 min-w-[85px] sm:min-w-0 flex flex-col items-center py-2.5 px-2 rounded-xl bg-surface-container-low text-center shadow-sm';
+      slot.className = 'flex-shrink-0 min-w-[85px] sm:min-w-0 flex flex-col items-center py-2.5 px-2 rounded-xl bg-surface-container-low dark:bg-slate-800/90 text-center shadow-sm border border-transparent dark:border-slate-700/50';
       slot.innerHTML = `
-        <span class="font-label-xs text-label-xs text-outline font-medium">${hourStr}</span>
-        <span class="material-symbols-outlined text-[22px] my-1 ${info.isRain ? 'text-primary' : 'text-amber-500'}">${info.icon}</span>
-        <span class="font-label-sm text-label-sm font-bold text-on-surface">${temp}°</span>
-        <span class="text-[11px] text-outline mt-0.5">${precip}% rain</span>
+        <span class="font-label-xs text-label-xs text-outline dark:text-slate-400 font-medium">${hourStr}</span>
+        <span class="material-symbols-outlined text-[22px] my-1 ${info.isRain ? 'text-primary dark:text-primary-fixed' : 'text-amber-500 dark:text-amber-400'}">${info.icon}</span>
+        <span class="font-label-sm text-label-sm font-bold text-on-surface dark:text-white">${temp}°</span>
+        <span class="text-[11px] text-outline dark:text-slate-400 mt-0.5">${precip}% rain</span>
       `;
       drawer.appendChild(slot);
     }
@@ -426,11 +446,11 @@
       state.isCelsius = celsius;
       if (unitC && unitF) {
         if (celsius) {
-          unitC.className = "w-8 h-8 rounded-full bg-inverse-surface text-on-primary font-label-xs text-label-xs font-bold flex items-center justify-center transition-all shadow-sm";
-          unitF.className = "w-8 h-8 rounded-full text-on-surface-variant hover:text-on-surface font-label-xs text-label-xs font-semibold flex items-center justify-center transition-all";
+          unitC.className = "w-8 h-8 rounded-full bg-inverse-surface dark:bg-slate-700 text-white font-label-xs text-label-xs font-bold flex items-center justify-center transition-all shadow-sm cursor-pointer";
+          unitF.className = "w-8 h-8 rounded-full text-on-surface-variant hover:text-on-surface dark:text-slate-400 dark:hover:text-white font-label-xs text-label-xs font-semibold flex items-center justify-center transition-all cursor-pointer";
         } else {
-          unitF.className = "w-8 h-8 rounded-full bg-inverse-surface text-on-primary font-label-xs text-label-xs font-bold flex items-center justify-center transition-all shadow-sm";
-          unitC.className = "w-8 h-8 rounded-full text-on-surface-variant hover:text-on-surface font-label-xs text-label-xs font-semibold flex items-center justify-center transition-all";
+          unitF.className = "w-8 h-8 rounded-full bg-inverse-surface dark:bg-slate-700 text-white font-label-xs text-label-xs font-bold flex items-center justify-center transition-all shadow-sm cursor-pointer";
+          unitC.className = "w-8 h-8 rounded-full text-on-surface-variant hover:text-on-surface dark:text-slate-400 dark:hover:text-white font-label-xs text-label-xs font-semibold flex items-center justify-center transition-all cursor-pointer";
         }
       }
       updateUI();
@@ -442,7 +462,7 @@
     }
   }
 
-  // Today vs Week Tabs Action
+  // Today vs Week Tabs Action (Rounded Rectangle Segmented Control)
   function initPeriodTabs() {
     const tabToday = document.getElementById('tab-today');
     const tabWeek = document.getElementById('tab-week');
@@ -450,14 +470,17 @@
     const hourlyToggle = document.getElementById('hourly-toggle');
     const hourlyChevron = document.getElementById('hourly-chevron');
 
+    const activeClasses = 'forecast-tab px-4 sm:px-5 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 bg-surface-container-lowest dark:bg-slate-700 text-on-surface dark:text-white shadow-sm cursor-pointer';
+    const inactiveClasses = 'forecast-tab px-4 sm:px-5 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-slate-100 cursor-pointer';
+
     if (tabToday && tabWeek) {
       tabToday.addEventListener('click', () => {
         state.activeTab = 'today';
         state.selectedDayIndex = 0;
-        tabToday.className = "forecast-tab font-headline-sm text-headline-sm text-on-surface font-bold pb-1 relative";
-        tabToday.innerHTML = 'Today <span class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-on-surface rounded-full"></span>';
-        tabWeek.className = "forecast-tab font-headline-sm text-headline-sm text-outline hover:text-on-surface transition-colors pb-1";
-        tabWeek.innerHTML = 'Week';
+        tabToday.className = activeClasses;
+        tabToday.textContent = 'Today';
+        tabWeek.className = inactiveClasses;
+        tabWeek.textContent = 'Week';
 
         // Automatically expand the hourly drawer for today
         if (hourlyDrawer) {
@@ -471,10 +494,10 @@
 
       tabWeek.addEventListener('click', () => {
         state.activeTab = 'week';
-        tabWeek.className = "forecast-tab font-headline-sm text-headline-sm text-on-surface font-bold pb-1 relative";
-        tabWeek.innerHTML = 'Week <span class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-on-surface rounded-full"></span>';
-        tabToday.className = "forecast-tab font-headline-sm text-headline-sm text-outline hover:text-on-surface transition-colors pb-1";
-        tabToday.innerHTML = 'Today';
+        tabWeek.className = activeClasses;
+        tabWeek.textContent = 'Week';
+        tabToday.className = inactiveClasses;
+        tabToday.textContent = 'Today';
         renderForecastStrip();
       });
     }
@@ -658,8 +681,37 @@
     }, 3500);
   }
 
+
+  // Dark / Light Theme Toggle Controller
+  function initThemeToggle() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    const icon = document.getElementById('theme-toggle-icon');
+
+    function updateThemeUI() {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (icon) {
+        icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+        icon.className = isDark
+          ? 'material-symbols-outlined text-[20px] text-amber-400 transition-transform duration-300'
+          : 'material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-300';
+      }
+    }
+
+    if (toggleBtn) {
+      updateThemeUI();
+      toggleBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('aura_theme', isDark ? 'dark' : 'light');
+        updateThemeUI();
+        renderForecastStrip();
+        renderHourlyHorizon();
+      });
+    }
+  }
+
   // Initialize
   document.addEventListener('DOMContentLoaded', () => {
+    initThemeToggle();
     initUnitToggle();
     initPeriodTabs();
     initSearch();

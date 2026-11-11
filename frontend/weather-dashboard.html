@@ -2,6 +2,18 @@
 <html lang="en">
 <head>
   <script>
+    // Theme initialization: dark mode preference (prevents theme flicker)
+    (function() {
+      const savedTheme = localStorage.getItem('aura_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+  <script>
     // Aura Onboarding Routing Gate:
     // If user has not registered or opted for guest mode, route them to registration first.
     (function() {
@@ -65,12 +77,12 @@
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-background font-sans text-on-surface antialiased selection:bg-primary-fixed selection:text-primary">
+<body class="bg-background dark:bg-[#0B0F19] font-sans text-on-surface dark:text-[#F3F4F6] antialiased selection:bg-primary-fixed selection:text-primary transition-colors duration-300">
 
   <!-- ========================================== -->
   <!-- TOP HEADER                                 -->
   <!-- ========================================== -->
-  <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-surface-container-high">
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white/85 dark:bg-[#0F172A]/90 backdrop-blur-xl border-b border-surface-container-high dark:border-slate-800/80 transition-colors duration-300">
     <div class="h-18 sm:h-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
       
       <!-- Brand & Status -->
@@ -93,7 +105,12 @@
       </div>
 
       <!-- Right Header Actions -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
+
+        <!-- Theme Toggle Button (Dark / Light Mode) -->
+        <button id="theme-toggle" class="w-9 h-9 rounded-full bg-surface-container-lowest dark:bg-slate-800 text-on-surface-variant dark:text-amber-400 hover:text-on-surface flex items-center justify-center shadow-sm hover:shadow transition-all border border-surface-container dark:border-slate-700 cursor-pointer" title="Toggle Dark / Light Mode" type="button">
+          <span class="material-symbols-outlined text-[20px]" id="theme-toggle-icon">dark_mode</span>
+        </button>
 
 
         <!-- Live Notifications Popover -->
@@ -102,7 +119,7 @@
             <span class="material-symbols-outlined text-[20px]">notifications</span>
           </button>
           
-          <div id="notifications-dropdown" class="absolute right-0 top-full mt-2 w-72 sm:w-80 p-4 rounded-2xl bg-white shadow-[0_16px_40px_rgba(0,0,0,0.12)] border border-surface-container-high hidden z-50">
+          <div id="notifications-dropdown" class="absolute right-0 top-full mt-2 w-72 sm:w-80 p-4 rounded-2xl bg-white dark:bg-slate-800 shadow-[0_16px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)] border border-surface-container-high dark:border-slate-700 hidden z-50">
             <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-container-high">
               <span class="font-bold text-xs uppercase tracking-wider text-outline">Telemetry Alerts</span>
               <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
@@ -128,18 +145,18 @@
             </div>
             <span class="material-symbols-outlined text-outline text-[16px] group-hover:rotate-180 transition-transform duration-200 hidden sm:block">expand_more</span>
           </button>
-          <div class="absolute right-0 top-full mt-2 w-52 py-2 rounded-2xl bg-white shadow-[0_16px_40px_rgba(0,0,0,0.12)] border border-surface-container-high opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-150 z-50 flex flex-col">
+          <div class="absolute right-0 top-full mt-2 w-52 py-2 rounded-2xl bg-white dark:bg-slate-800 shadow-[0_16px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)] border border-surface-container-high dark:border-slate-700 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-150 z-50 flex flex-col">
             <div class="px-4 py-2.5 border-b border-surface-container-high">
-              <p id="user-profile-name" class="font-bold text-xs text-on-surface truncate">Meteorologist</p>
-              <p id="user-profile-sub" class="text-[11px] text-outline truncate">Active Session</p>
+              <p id="user-profile-name" class="font-bold text-xs text-on-surface dark:text-white truncate">Meteorologist</p>
+              <p id="user-profile-sub" class="text-[11px] text-outline dark:text-slate-400 truncate">Active Session</p>
             </div>
-            <a class="px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2" href="registration.html">
+            <a class="px-4 py-2 text-xs font-semibold text-on-surface dark:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-700 transition-colors flex items-center gap-2" href="registration.html">
               <span class="material-symbols-outlined text-[16px] text-primary">person_add</span>
               Register New Account
             </a>
 
             <div class="border-t border-surface-container-high my-1"></div>
-            <button id="btn-logout" class="w-full text-left px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2" type="button">
+            <button id="btn-logout" class="w-full text-left px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors flex items-center gap-2 cursor-pointer" type="button">
               <span class="material-symbols-outlined text-[16px]">logout</span>
               Log Out to Registration
             </button>
@@ -153,95 +170,91 @@
   <!-- ========================================== -->
   <!-- MAIN APPLICATION BODY                      -->
   <!-- ========================================== -->
-  <main class="w-full pt-22 sm:pt-24 pb-12 bg-background flex flex-col items-center">
+  <main class="w-full pt-22 sm:pt-24 pb-12 bg-background dark:bg-[#0B0F19] flex flex-col items-center transition-colors duration-300">
     
     <div class="w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex justify-center items-start">
       
       <!-- Scandinavian Floating Super-Container -->
-      <div class="w-full max-w-[1360px] bg-[#F6F6F8] rounded-[24px] sm:rounded-[36px] md:rounded-[40px] shadow-[0_24px_70px_-15px_rgba(0,0,0,0.08)] flex flex-col lg:flex-row p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 overflow-hidden">
+      <div class="w-full max-w-[1360px] bg-[#F6F6F8] dark:bg-[#111827] rounded-[24px] sm:rounded-[36px] md:rounded-[40px] shadow-[0_24px_70px_-15px_rgba(0,0,0,0.08)] dark:shadow-[0_24px_70px_-15px_rgba(0,0,0,0.5)] border border-white/60 dark:border-slate-800/80 flex flex-col lg:flex-row p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 overflow-hidden transition-colors duration-300">
         
         <!-- ========================================== -->
         <!-- LEFT PANEL: Overview & Live Station        -->
         <!-- ========================================== -->
-        <aside class="w-full lg:w-[32%] xl:w-[30%] bg-surface-container-lowest rounded-[24px] sm:rounded-[28px] p-5 sm:p-7 flex flex-col justify-between shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
+        <aside class="w-full lg:w-[32%] xl:w-[30%] bg-surface-container-lowest dark:bg-[#161F30] rounded-[24px] sm:rounded-[28px] p-5 sm:p-7 flex flex-col justify-between shadow-[0_10px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-transparent dark:border-slate-800/80 transition-colors duration-300">
           
           <div>
             <!-- City Search with Live Autocomplete -->
-            <div class="relative flex items-center bg-surface-container-low rounded-2xl px-3.5 py-3 transition-all focus-within:ring-2 focus-within:ring-primary/20">
+            <div class="relative flex items-center bg-surface-container-low dark:bg-slate-800/90 rounded-2xl px-3.5 py-3 transition-all focus-within:ring-2 focus-within:ring-primary/20 dark:focus-within:ring-primary-fixed/30 border border-transparent dark:border-slate-700/60">
               <span class="material-symbols-outlined text-outline text-[20px] flex-shrink-0">search</span>
-              <input class="w-full bg-transparent px-3 font-medium text-sm text-on-surface placeholder:text-outline focus:outline-none min-w-0" id="city-search-input" placeholder="Search city or region..." type="text" autocomplete="off" value="London, United Kingdom" />
-              <button class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors shadow-sm flex-shrink-0" id="btn-geolocate" title="Locate Current Position (GPS)" type="button">
+              <input class="w-full bg-transparent px-3 font-medium text-sm text-on-surface dark:text-white placeholder:text-outline dark:placeholder:text-slate-400 focus:outline-none min-w-0" id="city-search-input" placeholder="Search city or region..." type="text" autocomplete="off" value="London, United Kingdom" />
+              <button class="w-8 h-8 rounded-full bg-surface-container-lowest dark:bg-slate-700 flex items-center justify-center text-on-surface-variant dark:text-slate-200 hover:text-primary dark:hover:text-white transition-colors shadow-sm flex-shrink-0 cursor-pointer" id="btn-geolocate" title="Locate Current Position (GPS)" type="button">
                 <span class="material-symbols-outlined text-[18px]">my_location</span>
               </button>
             </div>
 
-            <!-- Hero Graphic: Atmospheric Orb -->
-            <div class="relative my-6 sm:my-8 flex items-center justify-center min-h-[180px]">
-              <!-- Decorative Backing Clouds -->
-              <div class="absolute -top-3 left-8 w-24 h-16 bg-surface-container-high/60 rounded-full blur-[1px]"></div>
-              <div class="absolute top-1 left-16 w-20 h-20 bg-surface-container-high/70 rounded-full blur-[1px]"></div>
-              
-              <!-- Solar Core -->
-              <div class="relative w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr from-[#FFB800] via-[#FDB813] to-[#FFE066] shadow-[0_16px_36px_rgba(254,183,0,0.28)] flex items-center justify-center">
-                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
-              </div>
+            <!-- Dynamic Atmospheric Hero Weather Card (Dynamic Weather Color where Temperature is) -->
+          <div class="mt-5 relative overflow-hidden rounded-[26px] p-6 sm:p-7 text-white shadow-lg transition-all duration-700 flex flex-col justify-between min-h-[300px] sm:min-h-[320px]" id="hero-temp-card">
+            <!-- Dynamic Sky Gradient (Atmospheric weather color) -->
+            <div id="hero-weather-sky" class="absolute inset-0 bg-gradient-to-br from-blue-600 via-sky-500 to-indigo-600 transition-all duration-700"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/35 pointer-events-none"></div>
 
-              <!-- Front Glass Cloud -->
-              <div class="absolute bottom-4 left-10 w-28 h-16 bg-white/75 backdrop-blur-md rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.06)] flex items-center justify-center">
-                <span class="material-symbols-outlined text-slate-400 text-[32px] opacity-75">cloud</span>
+            <!-- Top Row: Condition Chip & Rain Bars -->
+            <div class="relative z-10 flex items-center justify-between">
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md shadow-sm border border-white/20">
+                <span class="material-symbols-outlined text-[18px] text-amber-300" id="hero-condition-icon">wb_sunny</span>
+                <span class="text-xs font-bold tracking-wide" id="hero-condition">Checking Live Conditions...</span>
               </div>
 
               <!-- Dynamic Rain Ticks (Only visible when it is actually raining) -->
-              <div class="absolute right-8 bottom-3 flex items-end gap-1.5 h-14" id="hero-rain-bars" style="display: none;">
-                <div class="w-1.5 h-8 bg-primary-container rounded-full animate-bounce" style="animation-delay: 0.1s; animation-duration: 1.4s;"></div>
-                <div class="w-1.5 h-12 bg-primary-container rounded-full animate-bounce" style="animation-delay: 0.3s; animation-duration: 1.6s;"></div>
-                <div class="w-1.5 h-14 bg-primary rounded-full animate-bounce" style="animation-delay: 0.2s; animation-duration: 1.5s;"></div>
-                <div class="w-1.5 h-10 bg-primary-container rounded-full animate-bounce" style="animation-delay: 0.4s; animation-duration: 1.3s;"></div>
+              <div class="flex items-end gap-1 h-6" id="hero-rain-bars" style="display: none;">
+                <div class="w-1 h-4 bg-white/90 rounded-full animate-bounce" style="animation-delay: 0.1s; animation-duration: 1.4s;"></div>
+                <div class="w-1 h-6 bg-white rounded-full animate-bounce" style="animation-delay: 0.3s; animation-duration: 1.6s;"></div>
+                <div class="w-1 h-5 bg-white/90 rounded-full animate-bounce" style="animation-delay: 0.2s; animation-duration: 1.5s;"></div>
               </div>
             </div>
 
-            <!-- Hero Metrics Display -->
-            <div class="flex flex-col">
-              <div class="flex items-baseline gap-1">
-                <span class="text-6xl sm:text-7xl font-light tracking-tighter text-on-surface" id="hero-temp-val">--</span>
-                <span class="text-3xl font-normal text-on-surface" id="hero-temp-unit">°C</span>
-              </div>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="text-sm font-semibold text-on-surface" id="hero-day-time">Loading...</span>
-                <span class="inline-block w-1 h-1 rounded-full bg-outline-variant"></span>
-                <span class="text-xs text-outline font-medium" id="hero-feels-like">Feels like --</span>
-              </div>
-            </div>
-
-            <!-- Separator Line -->
-            <div class="h-px bg-surface-container-high my-5"></div>
-
-            <!-- Sub-conditions Row -->
-            <div class="flex flex-col gap-2.5 text-sm text-on-surface">
-              <div class="flex items-center gap-2.5">
-                <span class="material-symbols-outlined text-outline text-[20px]">cloud_queue</span>
-                <span class="text-on-surface-variant font-medium" id="hero-condition">Checking Live Conditions...</span>
-              </div>
-              <div class="flex items-center gap-2.5">
-                <div class="flex items-center gap-0.5 text-primary">
-                  <span class="w-1 h-3 bg-primary rounded-full"></span>
-                  <span class="w-1 h-4 bg-primary rounded-full"></span>
-                  <span class="w-1 h-2 bg-primary rounded-full"></span>
+            <!-- Center: Large Temperature Display & Luminous Sun/Weather Orb -->
+            <div class="relative z-10 my-4 flex items-center justify-between gap-4">
+              <div class="flex flex-col">
+                <div class="flex items-baseline gap-1 drop-shadow-md">
+                  <span class="text-6xl sm:text-7xl font-extrabold tracking-tighter text-white" id="hero-temp-val">--</span>
+                  <span class="text-3xl font-semibold text-white/90" id="hero-temp-unit">°C</span>
                 </div>
-                <span class="text-on-surface-variant font-medium">Precipitation Chance: <strong class="text-on-surface font-semibold" id="hero-precip">0%</strong></span>
+                <div class="flex items-center gap-1.5 text-xs sm:text-sm text-white/90 font-medium mt-1">
+                  <span class="material-symbols-outlined text-[16px]">thermostat</span>
+                  <span id="hero-feels-like">Feels like --</span>
+                </div>
+              </div>
+
+              <!-- Luminous Floating Solar / Cloud Orb -->
+              <div class="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
+                <div id="hero-orb-sun" class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-300 via-amber-400 to-yellow-200 shadow-[0_0_30px_rgba(255,215,0,0.55)] flex items-center justify-center transition-all duration-700">
+                  <span class="material-symbols-outlined text-white text-[38px] drop-shadow" id="hero-orb-icon">wb_sunny</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Row: Day/Time & Precipitation -->
+            <div class="relative z-10 pt-3 border-t border-white/20 flex items-center justify-between text-xs text-white/90 font-medium">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-white/80">schedule</span>
+                <span id="hero-day-time">Loading...</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-white/80">water_drop</span>
+                <span>Precip: <strong class="text-white font-bold" id="hero-precip">0%</strong></span>
               </div>
             </div>
           </div>
 
-          <!-- Dynamic Atmospheric City Capsule -->
-          <div class="mt-6 sm:mt-8 relative overflow-hidden rounded-2xl h-26 sm:h-28 shadow-sm">
-            <div id="city-card-sky" class="w-full h-full bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-600 transition-all duration-700"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end p-4">
-              <div class="flex items-center gap-2 text-white">
-                <span class="material-symbols-outlined text-amber-300 text-[18px]">location_on</span>
-                <span class="font-semibold text-sm tracking-wide drop-shadow-sm truncate" id="city-card-name">London, United Kingdom</span>
-              </div>
+          <!-- Location Station Capsule (Clean station bar instead of the colored box below) -->
+          <div class="mt-4 flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low dark:bg-slate-800/80 border border-surface-container dark:border-slate-700/60 transition-colors">
+            <div class="flex items-center gap-2 text-on-surface dark:text-slate-100 min-w-0">
+              <span class="material-symbols-outlined text-primary dark:text-primary-fixed text-[20px] flex-shrink-0">location_on</span>
+              <span class="font-bold text-sm tracking-wide truncate" id="city-card-name">London, United Kingdom</span>
             </div>
+            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-surface-container dark:bg-slate-700 text-outline dark:text-slate-300 flex-shrink-0">Live Station</span>
+          </div>
           </div>
 
         </aside>
@@ -253,23 +266,22 @@
           
           <!-- Top Bar: Forecast Tabs & Unit Toggle -->
           <div class="flex items-center justify-between gap-4">
-            <!-- Period Tabs (Today / Week) -->
-            <div class="flex items-center gap-5 sm:gap-6">
-              <button class="forecast-tab font-bold text-lg sm:text-xl text-outline hover:text-on-surface transition-colors pb-1" id="tab-today" type="button">
+            <!-- Period Tabs (Today / Week Rounded Rectangle Segmented Control) -->
+            <div class="inline-flex items-center bg-surface-container dark:bg-slate-800 rounded-2xl p-1 shadow-sm border border-surface-container-high dark:border-slate-700/60">
+              <button class="forecast-tab px-4 sm:px-5 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-slate-100 cursor-pointer" id="tab-today" type="button">
                 Today
               </button>
-              <button class="forecast-tab font-bold text-lg sm:text-xl text-on-surface pb-1 relative" id="tab-week" type="button">
+              <button class="forecast-tab px-4 sm:px-5 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 bg-surface-container-lowest dark:bg-slate-700 text-on-surface dark:text-white shadow-sm cursor-pointer" id="tab-week" type="button">
                 Week
-                <span class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-on-surface rounded-full"></span>
               </button>
             </div>
 
             <!-- °C / °F Dual Toggle -->
-            <div class="flex items-center bg-surface-container rounded-full p-1 shadow-sm">
-              <button class="w-8 h-8 rounded-full bg-inverse-surface text-white text-xs font-bold flex items-center justify-center transition-all shadow-sm" id="unit-c" type="button">
+            <div class="flex items-center bg-surface-container dark:bg-slate-800 rounded-full p-1 shadow-sm border border-transparent dark:border-slate-700/60">
+              <button class="w-8 h-8 rounded-full bg-inverse-surface dark:bg-slate-700 text-white text-xs font-bold flex items-center justify-center transition-all shadow-sm cursor-pointer" id="unit-c" type="button">
                 °C
               </button>
-              <button class="w-8 h-8 rounded-full text-on-surface-variant hover:text-on-surface text-xs font-semibold flex items-center justify-center transition-all" id="unit-f" type="button">
+              <button class="w-8 h-8 rounded-full text-on-surface-variant hover:text-on-surface dark:text-slate-400 dark:hover:text-white text-xs font-semibold flex items-center justify-center transition-all cursor-pointer" id="unit-f" type="button">
                 °F
               </button>
             </div>
@@ -283,16 +295,16 @@
 
           <!-- Section Heading -->
           <div class="flex items-center justify-between pt-1">
-            <h2 class="font-bold text-xl text-on-surface tracking-tight">Today's Highlights</h2>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-outline">Sensor Array Active</span>
+            <h2 class="font-bold text-xl text-on-surface dark:text-white tracking-tight">Today's Highlights</h2>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-outline dark:text-slate-400">Sensor Array Active</span>
           </div>
 
           <!-- 3x2 Highlights Grid (Responsive: 1 col on mobile, 2 col on tablet, 3 col on desktop) -->
           <div id="highlights-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             
             <!-- CARD 1: UV Index -->
-            <div class="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] transition-all">
-              <span class="text-sm font-medium text-outline">UV Index</span>
+            <div class="bg-surface-container-lowest dark:bg-[#161F30] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] border border-transparent dark:border-slate-800/80 transition-all">
+              <span class="text-sm font-medium text-outline dark:text-slate-400">UV Index</span>
               <div class="relative flex flex-col items-center justify-center my-2">
                 <svg class="w-40 h-22 overflow-visible" viewBox="0 0 160 90">
                   <path d="M 20 80 A 60 60 0 0 1 140 80" fill="none" stroke="#EBEBEB" stroke-linecap="round" stroke-width="12"></path>
@@ -305,7 +317,7 @@
                   <span>12</span>
                 </div>
                 <div class="absolute bottom-1 flex flex-col items-center">
-                  <span class="text-3xl font-extrabold text-on-surface leading-none" id="uv-val">--</span>
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-white leading-none" id="uv-val">--</span>
                   <span class="text-[11px] font-bold mt-1 text-amber-600" id="uv-label">Moderate</span>
                 </div>
               </div>
@@ -313,11 +325,11 @@
             </div>
 
             <!-- CARD 2: Wind Status -->
-            <div class="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] transition-all">
-              <span class="text-sm font-medium text-outline">Wind Status</span>
+            <div class="bg-surface-container-lowest dark:bg-[#161F30] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] border border-transparent dark:border-slate-800/80 transition-all">
+              <span class="text-sm font-medium text-outline dark:text-slate-400">Wind Status</span>
               <div class="my-3">
                 <div class="flex items-baseline gap-1.5">
-                  <span class="text-3xl font-extrabold text-on-surface" id="wind-speed">--</span>
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-white" id="wind-speed">--</span>
                   <span class="text-sm font-semibold text-outline" id="wind-speed-unit">km/h</span>
                 </div>
               </div>
@@ -325,21 +337,21 @@
                 <div class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center shadow-inner">
                   <span class="material-symbols-outlined text-primary text-[20px]" id="wind-compass">navigation</span>
                 </div>
-                <span class="text-sm font-bold text-on-surface tracking-wider" id="wind-direction">--</span>
+                <span class="text-sm font-bold text-on-surface dark:text-white tracking-wider" id="wind-direction">--</span>
                 <span class="text-xs text-outline ml-auto" id="wind-gusts">Gusts --</span>
               </div>
             </div>
 
             <!-- CARD 3: Sunrise & Sunset -->
-            <div class="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] transition-all">
-              <span class="text-sm font-medium text-outline">Sunrise & Sunset</span>
+            <div class="bg-surface-container-lowest dark:bg-[#161F30] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] border border-transparent dark:border-slate-800/80 transition-all">
+              <span class="text-sm font-medium text-outline dark:text-slate-400">Sunrise & Sunset</span>
               <div class="flex flex-col gap-3 my-2">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shadow-sm">
                     <span class="material-symbols-outlined text-[18px]">arrow_upward</span>
                   </div>
                   <div>
-                    <span class="font-bold text-sm text-on-surface" id="sunrise-time">--:--</span>
+                    <span class="font-bold text-sm text-on-surface dark:text-white" id="sunrise-time">--:--</span>
                     <span class="text-[10px] text-outline ml-1.5">Dawn</span>
                   </div>
                 </div>
@@ -348,7 +360,7 @@
                     <span class="material-symbols-outlined text-[18px]">arrow_downward</span>
                   </div>
                   <div>
-                    <span class="font-bold text-sm text-on-surface" id="sunset-time">--:--</span>
+                    <span class="font-bold text-sm text-on-surface dark:text-white" id="sunset-time">--:--</span>
                     <span class="text-[10px] text-outline ml-1.5">Dusk</span>
                   </div>
                 </div>
@@ -357,11 +369,11 @@
             </div>
 
             <!-- CARD 4: Humidity -->
-            <div class="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] transition-all">
-              <span class="text-sm font-medium text-outline">Humidity</span>
+            <div class="bg-surface-container-lowest dark:bg-[#161F30] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] border border-transparent dark:border-slate-800/80 transition-all">
+              <span class="text-sm font-medium text-outline dark:text-slate-400">Humidity</span>
               <div class="flex items-center justify-between my-2">
                 <div class="flex items-baseline">
-                  <span class="text-3xl font-extrabold text-on-surface" id="humidity-val">--</span>
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-white" id="humidity-val">--</span>
                   <span class="text-base font-normal text-on-surface ml-0.5">%</span>
                 </div>
                 <!-- Vertical Tactile Slider Track -->
@@ -370,23 +382,23 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <span class="text-sm font-semibold text-on-surface" id="humidity-status">Normal</span>
+                <span class="text-sm font-semibold text-on-surface dark:text-white" id="humidity-status">Normal</span>
                 <span class="text-sm" id="humidity-emoji">👍</span>
               </div>
             </div>
 
             <!-- CARD 5: Visibility -->
-            <div class="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] transition-all">
-              <span class="text-sm font-medium text-outline">Visibility</span>
+            <div class="bg-surface-container-lowest dark:bg-[#161F30] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] border border-transparent dark:border-slate-800/80 transition-all">
+              <span class="text-sm font-medium text-outline dark:text-slate-400">Visibility</span>
               <div class="my-3">
                 <div class="flex items-baseline gap-1.5">
-                  <span class="text-3xl font-extrabold text-on-surface" id="visibility-val">--</span>
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-white" id="visibility-val">--</span>
                   <span class="text-sm font-semibold text-outline" id="visibility-unit">km</span>
                 </div>
               </div>
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold text-on-surface" id="visibility-status">Good</span>
+                  <span class="text-sm font-semibold text-on-surface dark:text-white" id="visibility-status">Good</span>
                   <span class="text-sm" id="visibility-emoji">🙂</span>
                 </div>
                 <span class="text-xs text-outline" id="visibility-desc">Clear horizon</span>
@@ -394,11 +406,11 @@
             </div>
 
             <!-- CARD 6: Air Quality -->
-            <div id="card-air-quality" class="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] transition-all">
-              <span class="text-sm font-medium text-outline">Air Quality</span>
+            <div id="card-air-quality" class="bg-surface-container-lowest dark:bg-[#161F30] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[0_6px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.05)] border border-transparent dark:border-slate-800/80 transition-all">
+              <span class="text-sm font-medium text-outline dark:text-slate-400">Air Quality</span>
               <div class="flex items-center justify-between my-2">
                 <div class="flex items-baseline">
-                  <span class="text-3xl font-extrabold text-on-surface" id="aqi-val">--</span>
+                  <span class="text-3xl font-extrabold text-on-surface dark:text-white" id="aqi-val">--</span>
                   <span class="text-xs font-bold text-outline ml-1">AQI</span>
                 </div>
                 <!-- Vertical Slider Track -->
@@ -407,7 +419,7 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <span class="text-sm font-semibold text-on-surface" id="aqi-status">Good</span>
+                <span class="text-sm font-semibold text-on-surface dark:text-white" id="aqi-status">Good</span>
                 <span class="text-sm" id="aqi-emoji">🌱</span>
               </div>
             </div>
@@ -415,11 +427,11 @@
           </div>
 
           <!-- Collapsible Hourly Horizon Accordion -->
-          <div class="bg-surface-container-lowest rounded-2xl p-4 sm:p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] flex flex-col gap-3">
+          <div class="bg-surface-container-lowest dark:bg-[#161F30] rounded-2xl p-4 sm:p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] border border-transparent dark:border-slate-800/80 flex flex-col gap-3 transition-colors">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
-                <span class="text-sm font-bold text-on-surface">Next 6 Hours Horizon</span>
+                <span class="text-sm font-bold text-on-surface dark:text-white">Next 6 Hours Horizon</span>
               </div>
               <button class="text-xs font-semibold text-primary hover:opacity-80 transition-colors flex items-center gap-1" id="hourly-toggle" type="button">
                 <span>Expand Timeline</span>
@@ -441,13 +453,13 @@
   <!-- ========================================== -->
   <!-- FOOTER (Clean & Functional)                -->
   <!-- ========================================== -->
-  <footer class="w-full bg-surface-container-low py-6 border-t border-surface-container-high">
+  <footer class="w-full bg-surface-container-low dark:bg-[#0B0F19] py-6 border-t border-surface-container-high dark:border-slate-800 text-on-surface-variant dark:text-slate-400 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant">
       <div class="flex items-center gap-2">
         <div class="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-white">
           <span class="material-symbols-outlined text-[14px]">routine</span>
         </div>
-        <span class="font-bold text-on-surface">Aura Weather</span>
+        <span class="font-bold text-on-surface dark:text-white">Aura Weather</span>
         <span class="text-outline">Nordic Telemetry Engine</span>
       </div>
       <div class="text-center sm:text-right text-outline">
