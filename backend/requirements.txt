@@ -1,0 +1,7 @@
+# Aura Weather — Backend Dependencies
+# The core backend runs on Python Standard Library (zero external dependencies required).
+# These optional packages are included for enhanced production environments & WSGI/ASGI deployments.
+
+requests>=2.31.0
+python-dotenv>=1.0.0
+gunicorn>=21.2.0; sys_platform != 'win32'

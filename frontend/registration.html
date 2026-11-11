@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create an Account — Aura Weather Telemetry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <script src="config.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0c55c5',
+            'primary-container': '#376fdf',
+            'on-primary': '#ffffff',
+            'primary-fixed': '#dae2ff',
+            secondary: '#8b5000',
+            'secondary-container': '#ffa84b',
+            'on-secondary-container': '#703f00',
+            tertiary: '#006a44',
+            surface: '#f6faff',
+            'surface-container-low': '#eff4fa',
+            'surface-container': '#e9eef4',
+            'surface-container-high': '#e4e9ef',
+            'surface-container-highest': '#dee3e9',
+            'surface-container-lowest': '#ffffff',
+            'on-surface': '#171c21',
+            'on-surface-variant': '#424653',
+            outline: '#737785',
+            'outline-variant': '#c3c6d6',
+            'inverse-surface': '#2b3136'
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @layer base {
+      html, body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+    }
+    body {
+      background: radial-gradient(circle at 10% 10%, #edf4fc 0%, #f6faff 100%);
+    }
+  </style>
+</head>
+<body class="font-sans text-on-surface antialiased selection:bg-primary-fixed selection:text-primary min-h-screen flex flex-col justify-center items-center p-3 sm:p-6 lg:p-8">
+
+  <!-- Existing Session Banner (If user is already registered) -->
+  <div id="session-banner" class="w-full max-w-5xl mb-3 hidden">
+    <div class="bg-white border border-primary/20 rounded-2xl px-4 py-3 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center gap-2.5 text-on-surface">
+        <span class="material-symbols-outlined text-primary text-[20px]">account_circle</span>
+        <span>You are currently signed in as <strong id="active-user-name" class="text-primary font-bold">User</strong></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="weather-dashboard.html" class="px-3.5 py-1.5 rounded-full bg-primary text-white font-semibold hover:bg-primary-container transition-colors inline-flex items-center gap-1 text-xs">
+          <span>Go to Live Dashboard</span>
+          <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Card Container: Fluid Responsive Double-Split Card -->
+  <div class="w-full max-w-5xl bg-surface-container-low rounded-[24px] sm:rounded-[36px] shadow-[0_20px_50px_rgba(0,0,0,0.06)] p-3 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 border border-white/80">
+
+    <!-- Left Column: Registration Form Card -->
+    <div class="w-full lg:w-7/12 bg-surface-container-lowest rounded-[20px] sm:rounded-[28px] p-4 sm:p-7 md:p-8 shadow-sm flex flex-col justify-between border border-surface-container">
+      <div>
+        
+        <!-- Header Branding & Security Badge -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <a href="weather-dashboard.html" class="flex items-center gap-3 group">
+            <div class="relative w-11 h-11 flex items-center justify-center flex-shrink-0">
+              <div class="w-9 h-9 rounded-full bg-secondary-container shadow-md flex items-center justify-center group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-white text-[20px]">wb_sunny</span>
+              </div>
+              <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-primary-container rounded-full flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
+                <span class="material-symbols-outlined text-[11px]">cloud</span>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-bold text-base sm:text-lg text-on-surface leading-tight tracking-tight">AtmoSphere</span>
+              <span class="text-[11px] font-semibold text-outline uppercase tracking-wider">Meteorology Engine</span>
+            </div>
+          </a>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-medium">
+            <span class="material-symbols-outlined text-[15px] text-emerald-600">verified_user</span>
+            <span>Encrypted Node</span>
+          </div>
+        </div>
+
+        <!-- Header Titles -->
+        <div class="space-y-1.5 mb-6">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-on-surface tracking-tight">Create an Account</h1>
+          <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+            Get real-time hyper-local weather alerts, 7-day forecasts, and atmospheric telemetry delivered with serene precision.
+          </p>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="reg-form" class="space-y-4">
+          
+          <!-- Full Name Field -->
+          <div class="space-y-1">
+            <label class="block text-xs sm:text-sm font-semibold text-on-surface" for="reg-name">Full Name</label>
+            <div class="flex items-center bg-surface-container-low rounded-xl px-3.5 py-2.5 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-surface-container focus-within:border-primary/50">
+              <span class="material-symbols-outlined text-outline mr-2.5 text-[20px] flex-shrink-0">person</span>
+              <input class="w-full bg-transparent border-0 outline-none text-xs sm:text-sm text-on-surface placeholder:text-outline/70 min-w-0" id="reg-name" placeholder="e.g. Asif Chowdhury" required="" type="text" autocomplete="name" />
+            </div>
+          </div>
+
+          <!-- Email Address Field -->
+          <div class="space-y-1">
+            <label class="block text-xs sm:text-sm font-semibold text-on-surface" for="reg-email">Email Address</label>
+            <div class="flex items-center bg-surface-container-low rounded-xl px-3.5 py-2.5 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-surface-container focus-within:border-primary/50">
+              <span class="material-symbols-outlined text-outline mr-2.5 text-[20px] flex-shrink-0">mail</span>
+              <input class="w-full bg-transparent border-0 outline-none text-xs sm:text-sm text-on-surface placeholder:text-outline/70 min-w-0" id="reg-email" placeholder="e.g. asif@example.com" required="" type="email" autocomplete="email" />
+            </div>
+          </div>
+
+          <!-- Password Field with Interactive Strength Meter -->
+          <div class="space-y-1">
+            <div class="flex justify-between items-center">
+              <label class="block text-xs sm:text-sm font-semibold text-on-surface" for="reg-password">Password</label>
+              <span class="text-[11px] font-semibold text-outline" id="strength-label">Security: Fair</span>
+            </div>
+            <div class="flex items-center bg-surface-container-low rounded-xl px-3.5 py-2.5 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-surface-container focus-within:border-primary/50">
+              <span class="material-symbols-outlined text-outline mr-2.5 text-[20px] flex-shrink-0">lock</span>
+              <input class="w-full bg-transparent border-0 outline-none text-xs sm:text-sm text-on-surface placeholder:text-outline/70 min-w-0" id="reg-password" placeholder="At least 6 characters" required="" type="password" autocomplete="new-password" />
+              <button class="text-outline hover:text-on-surface transition-colors p-1 flex-shrink-0" id="toggle-pwd" type="button" title="Show/hide password">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              </button>
+            </div>
+            
+            <!-- Strength Progress Indicators -->
+            <div class="grid grid-cols-4 gap-1.5 pt-1">
+              <div class="h-1.5 rounded-full bg-secondary-container transition-all" id="bar-1"></div>
+              <div class="h-1.5 rounded-full bg-secondary-container transition-all" id="bar-2"></div>
+              <div class="h-1.5 rounded-full bg-surface-container-highest transition-all" id="bar-3"></div>
+              <div class="h-1.5 rounded-full bg-surface-container-highest transition-all" id="bar-4"></div>
+            </div>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="space-y-1">
+            <label class="block text-xs sm:text-sm font-semibold text-on-surface" for="reg-confirm">Confirm Password</label>
+            <div class="flex items-center bg-surface-container-low rounded-xl px-3.5 py-2.5 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-surface-container focus-within:border-primary/50">
+              <span class="material-symbols-outlined text-outline mr-2.5 text-[20px] flex-shrink-0">lock_reset</span>
+              <input class="w-full bg-transparent border-0 outline-none text-xs sm:text-sm text-on-surface placeholder:text-outline/70 min-w-0" id="reg-confirm" placeholder="Re-enter password" required="" type="password" autocomplete="new-password" />
+              <span class="material-symbols-outlined text-[20px] text-emerald-600 transition-opacity opacity-0 flex-shrink-0" id="match-indicator">check_circle</span>
+            </div>
+          </div>
+
+          <!-- Legal Agreement Checkbox -->
+          <div class="flex items-start gap-2.5 pt-1">
+            <input class="mt-0.5 w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer accent-primary flex-shrink-0" id="terms-check" required="" type="checkbox" />
+            <label class="text-xs text-on-surface-variant cursor-pointer select-none leading-relaxed" for="terms-check">
+              I agree to the <span onclick="alert('Aura Weather: Real-time telemetry is processed directly from open sensors.')" class="font-semibold text-on-surface hover:underline cursor-pointer">Terms of Service</span> and acknowledge the <span onclick="alert('Aura Weather: Direct connection to Open-Meteo live API. Zero cookies or tracking.')" class="font-semibold text-on-surface hover:underline cursor-pointer">Privacy Policy</span>.
+            </label>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-2 space-y-2.5">
+            <button id="btn-submit" class="w-full py-3.5 px-6 bg-on-surface hover:bg-inverse-surface active:scale-[0.99] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer" type="submit">
+              <span>Create Account & Launch Weather</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+
+            <!-- Instant Guest Demo Option -->
+            <button id="btn-guest" type="button" class="w-full py-2.5 px-4 bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs sm:text-sm rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px] text-outline">bolt</span>
+              <span>Skip sign up & explore as Guest</span>
+            </button>
+          </div>
+        </form>
+
+      </div>
+
+      <!-- Login Redirect Footer -->
+      <div class="pt-5 mt-4 border-t border-surface-container text-center">
+        <p class="text-xs sm:text-sm text-on-surface-variant">
+          Already have an account? 
+          <a class="font-bold text-primary hover:underline ml-1 inline-flex items-center gap-0.5" href="login.html">
+            <span>Log in</span>
+            <span class="material-symbols-outlined text-[14px]">login</span>
+          </a>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Live Atmospheric Showcase Panel -->
+    <div class="w-full lg:w-5/12 flex flex-col justify-between gap-4 sm:gap-5">
+      
+      <!-- Top Preview Strip: Live Intelligence & Mini Forecast -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-sm sm:text-base text-on-surface">Live Intelligence</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </div>
+          <div class="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded-full text-[11px] font-bold">
+            <span class="px-1.5 py-0.5 rounded-full bg-on-surface text-white">°C</span>
+            <span class="px-1.5 py-0.5 text-on-surface-variant">°F</span>
+          </div>
+        </div>
+
+        <!-- 3-Tile Mini Forecast Strip -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3">
+          
+          <!-- Sun Card -->
+          <div class="bg-surface-container-lowest rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-between shadow-sm border border-surface-container/60 hover:shadow-md transition-shadow">
+            <span class="text-xs font-medium text-on-surface-variant">Sun</span>
+            <div class="w-9 h-9 my-1.5 rounded-full bg-secondary-container/20 flex items-center justify-center text-amber-500">
+              <span class="material-symbols-outlined text-[20px]">wb_sunny</span>
+            </div>
+            <div class="flex gap-1 text-xs font-semibold">
+              <span class="text-on-surface">15°</span>
+              <span class="text-outline">-3°</span>
+            </div>
+          </div>
+
+          <!-- Mon Card -->
+          <div class="bg-surface-container-lowest rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-between shadow-sm border border-surface-container/60 hover:shadow-md transition-shadow">
+            <span class="text-xs font-medium text-on-surface-variant">Mon</span>
+            <div class="w-9 h-9 my-1.5 rounded-full bg-blue-50 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[20px]">rainy</span>
+            </div>
+            <div class="flex gap-1 text-xs font-semibold">
+              <span class="text-on-surface">12°</span>
+              <span class="text-outline">7°</span>
+            </div>
+          </div>
+
+          <!-- Tue Card -->
+          <div class="bg-surface-container-lowest rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-between shadow-sm border border-surface-container/60 hover:shadow-md transition-shadow">
+            <span class="text-xs font-medium text-on-surface-variant">Tue</span>
+            <div class="w-9 h-9 my-1.5 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+              <span class="material-symbols-outlined text-[20px]">cloud</span>
+            </div>
+            <div class="flex gap-1 text-xs font-semibold">
+              <span class="text-on-surface">9°</span>
+              <span class="text-outline">7°</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Metric Highlight Cards: UV Index & Humidity -->
+      <div class="grid grid-cols-2 gap-3">
+        
+        <!-- UV Gauge Card -->
+        <div class="bg-surface-container-lowest rounded-2xl p-3 sm:p-3.5 shadow-sm border border-surface-container/60 flex flex-col justify-between">
+          <span class="text-xs font-medium text-on-surface-variant">UV Index</span>
+          <div class="relative w-24 h-14 mx-auto my-1 flex items-end justify-center">
+            <svg class="w-full h-full overflow-visible" viewBox="0 0 100 50">
+              <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#edeef0" stroke-linecap="round" stroke-width="8"></path>
+              <path d="M 10 50 A 40 40 0 0 1 50 10" fill="none" stroke="#feb700" stroke-linecap="round" stroke-width="8"></path>
+            </svg>
+            <span class="absolute bottom-0 text-base sm:text-lg font-bold text-on-surface">5</span>
+          </div>
+          <div class="flex justify-between items-center text-[10px] sm:text-[11px] text-outline font-semibold px-0.5">
+            <span class="text-amber-600">Moderate</span>
+            <span>12 Max</span>
+          </div>
+        </div>
+
+        <!-- Humidity Pill Slider Card -->
+        <div class="bg-surface-container-lowest rounded-2xl p-3 sm:p-3.5 shadow-sm border border-surface-container/60 flex flex-col justify-between">
+          <span class="text-xs font-medium text-on-surface-variant">Humidity</span>
+          <div class="flex items-center justify-between py-1">
+            <div>
+              <div class="flex items-baseline">
+                <span class="text-xl sm:text-2xl font-extrabold text-on-surface">12</span>
+                <span class="text-xs font-bold text-on-surface ml-0.5">%</span>
+              </div>
+              <span class="text-[11px] font-semibold text-on-surface flex items-center gap-1 mt-1">
+                Normal 👍
+              </span>
+            </div>
+            <!-- Vertical Pill Gauge Track -->
+            <div class="w-3.5 h-12 rounded-full bg-surface-container p-0.5 flex flex-col justify-end">
+              <div class="w-2.5 h-2.5 rounded-full bg-primary shadow-sm mb-1 self-center"></div>
+            </div>
+          </div>
+          <span class="text-[10px] text-outline">Comfortable dew</span>
+        </div>
+
+      </div>
+
+      <!-- Wind Status Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-3 sm:p-3.5 shadow-sm border border-surface-container/60 flex items-center justify-between">
+        <div>
+          <span class="text-xs font-medium text-on-surface-variant block">Wind Status</span>
+          <div class="flex items-baseline gap-1 mt-0.5">
+            <span class="text-lg sm:text-xl font-bold text-on-surface">7.70</span>
+            <span class="text-xs text-outline font-medium">km/h</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 bg-surface-container px-2.5 py-1 rounded-full text-xs font-semibold text-on-surface">
+          <span class="material-symbols-outlined text-primary text-[16px]">near_me</span>
+          <span>WSW 240°</span>
+        </div>
+      </div>
+
+      <!-- Location City Landmark Card -->
+      <div class="relative w-full h-24 sm:h-28 rounded-2xl overflow-hidden shadow-sm flex items-end p-3 group">
+        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDs74bHpH09gAfuZhX6f3GB1CoCUvsh3Yyeo60KcOYFu95Kvn57Gz97Y283his4b-sUHr_4nH2jw0F9dBQMxA9ILz0_zj8VelUR5RG6LaV1ROcNxDaWfJdF0DRCN3ab3fV7AcVOey8dEzXOJZVxnbBPdR5CJWxY1g230H50Uqyxktv3jX1kgZIqTMbSbWjrTqXx8dSYCzIHlAEU9s85WwGMfgZuq-suNP279c0he0o')"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        <div class="relative z-10 flex items-center justify-between w-full text-white">
+          <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold">
+            <span class="material-symbols-outlined text-[16px] text-amber-300">location_on</span>
+            <span>New York, NY, USA</span>
+          </div>
+          <span class="text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full text-white font-medium">HQ Radar</span>
+        </div>
+      </div>
+
+      <!-- Global Doppler Ribbon -->
+      <div class="bg-surface-container rounded-2xl p-2.5 sm:p-3 flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-[16px]">public</span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-xs font-bold text-on-surface truncate">Global Doppler Radar</span>
+          <span class="text-[10px] text-on-surface-variant truncate">Live Satellite Telemetry across 190+ countries</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // State & Auth Handling
+    (function() {
+      // 1. Check if user already registered
+      const activeUser = localStorage.getItem('aura_user');
+      if (activeUser) {
+        try {
+          const userObj = JSON.parse(activeUser);
+          const banner = document.getElementById('session-banner');
+          const nameSpan = document.getElementById('active-user-name');
+          if (banner && nameSpan && userObj.name) {
+            nameSpan.textContent = userObj.name;
+            banner.classList.remove('hidden');
+          }
+        } catch (e) {}
+      }
+
+      // 2. Password Confirmation & Strength
+      const pwdInput = document.getElementById('reg-password');
+      const confirmInput = document.getElementById('reg-confirm');
+      const matchIcon = document.getElementById('match-indicator');
+      const strengthText = document.getElementById('strength-label');
+      const bar1 = document.getElementById('bar-1');
+      const bar2 = document.getElementById('bar-2');
+      const bar3 = document.getElementById('bar-3');
+      const bar4 = document.getElementById('bar-4');
+      const toggleBtn = document.getElementById('toggle-pwd');
+
+      pwdInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (val.length >= 10 && /[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) {
+          strengthText.textContent = 'Security: Elite';
+          bar1.className = 'h-1.5 rounded-full bg-emerald-500 transition-all';
+          bar2.className = 'h-1.5 rounded-full bg-emerald-500 transition-all';
+          bar3.className = 'h-1.5 rounded-full bg-emerald-500 transition-all';
+          bar4.className = 'h-1.5 rounded-full bg-emerald-500 transition-all';
+        } else if (val.length >= 8) {
+          strengthText.textContent = 'Security: Strong';
+          bar1.className = 'h-1.5 rounded-full bg-primary transition-all';
+          bar2.className = 'h-1.5 rounded-full bg-primary transition-all';
+          bar3.className = 'h-1.5 rounded-full bg-primary transition-all';
+          bar4.className = 'h-1.5 rounded-full bg-surface-container-highest transition-all';
+        } else if (val.length >= 6) {
+          strengthText.textContent = 'Security: Good';
+          bar1.className = 'h-1.5 rounded-full bg-secondary-container transition-all';
+          bar2.className = 'h-1.5 rounded-full bg-secondary-container transition-all';
+          bar3.className = 'h-1.5 rounded-full bg-surface-container-highest transition-all';
+          bar4.className = 'h-1.5 rounded-full bg-surface-container-highest transition-all';
+        } else {
+          strengthText.textContent = 'Security: Fair';
+          bar1.className = 'h-1.5 rounded-full bg-secondary-container transition-all';
+          bar2.className = 'h-1.5 rounded-full bg-surface-container-highest transition-all';
+          bar3.className = 'h-1.5 rounded-full bg-surface-container-highest transition-all';
+          bar4.className = 'h-1.5 rounded-full bg-surface-container-highest transition-all';
+        }
+        checkMatch();
+      });
+
+      confirmInput.addEventListener('input', checkMatch);
+
+      function checkMatch() {
+        if (confirmInput.value.length > 0 && confirmInput.value === pwdInput.value) {
+          matchIcon.classList.remove('opacity-0');
+          matchIcon.classList.add('opacity-100');
+        } else {
+          matchIcon.classList.add('opacity-0');
+          matchIcon.classList.remove('opacity-100');
+        }
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        const isPassword = pwdInput.type === 'password';
+        pwdInput.type = isPassword ? 'text' : 'password';
+        toggleBtn.querySelector('span').textContent = isPassword ? 'visibility_off' : 'visibility';
+      });
+
+      // 3. Form Submit -> Backend API with Seamless Local Fallback
+      const regForm = document.getElementById('reg-form');
+      const submitBtn = document.getElementById('btn-submit');
+      regForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const nameVal = document.getElementById('reg-name').value.trim();
+        const emailVal = document.getElementById('reg-email').value.trim();
+        const pwdVal = pwdInput.value;
+        const confirmVal = confirmInput.value;
+
+        if (pwdVal !== confirmVal) {
+          alert('Passwords do not match. Please verify your password confirmation.');
+          confirmInput.focus();
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Creating Account...</span>';
+
+        // Try Backend REST API first
+        try {
+          const resp = await fetch((window.AURA_API_BASE || '') + '/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: nameVal, email: emailVal, password: pwdVal })
+          });
+          const data = await resp.json();
+          if (resp.ok && data.success) {
+            localStorage.setItem('aura_token', data.token);
+            localStorage.setItem('aura_user', JSON.stringify(data.user));
+            sessionStorage.setItem('aura_guest', 'false');
+            window.location.href = 'weather-dashboard.html';
+            return;
+          } else if (!resp.ok && data.error && !data.error.includes('route not found')) {
+            alert(data.error);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>Create Account & Launch Weather</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span>';
+            return;
+          }
+        } catch (err) {
+          console.log('Running in static / standalone mode. Using client storage fallback.');
+        }
+
+        // Graceful Client Fallback
+        const userRecord = {
+          name: nameVal || 'Explorer',
+          email: emailVal,
+          registeredAt: new Date().toISOString()
+        };
+        localStorage.setItem('aura_user', JSON.stringify(userRecord));
+        sessionStorage.setItem('aura_guest', 'false');
+
+        setTimeout(() => {
+          window.location.href = 'weather-dashboard.html';
+        }, 400);
+      });
+
+      // 4. Continue as Guest -> Set sessionStorage and redirect
+      const guestBtn = document.getElementById('btn-guest');
+      if (guestBtn) {
+        guestBtn.addEventListener('click', () => {
+          sessionStorage.setItem('aura_guest', 'true');
+          window.location.href = 'weather-dashboard.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
