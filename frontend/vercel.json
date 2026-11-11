@@ -1,0 +1,9 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/registration", "destination": "/registration.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/weather-dashboard", "destination": "/weather-dashboard.html" },
+    { "source": "/dashboard", "destination": "/weather-dashboard.html" }
+  ]
+}
