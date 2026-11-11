@@ -7,145 +7,160 @@ A production-ready, fullstack responsive weather web application powered by live
 ## 📂 Project Structure
 
 ```
-Stitch/
-├── frontend/                   # Static frontend (HTML, CSS via Tailwind CDN, JS)
+WeatherApp/
+├── frontend/                   # Static frontend (HTML, Tailwind CSS, Vanilla JS)
 │   ├── index.html              # Site entry point (auto-redirects new visitors)
-│   ├── registration.html       # User registration (mobile-first, fully responsive)
+│   ├── registration.html       # User registration (mobile-first, responsive)
 │   ├── login.html              # Authentication portal
-│   ├── weather-dashboard.html  # Live weather dashboard
+│   ├── weather-dashboard.html  # Live atmospheric weather dashboard
 │   ├── weather.js              # Open-Meteo API client & UI renderer
+│   ├── config.js               # Dynamic API endpoint configuration
 │   └── DESIGN.md               # Aura Atmosphere design system tokens
 │
 ├── backend/                    # Python backend server
-│   ├── server.py               # HTTP server with REST API & weather proxy
-│   ├── database.py             # SQLite user auth (PBKDF2 password hashing)
+│   ├── server.py               # REST API, weather proxy with TTL cache, static file server
+│   ├── database.py             # SQLite user auth (PBKDF2-SHA256 password hashing)
 │   ├── requirements.txt        # Python dependencies
-│   ├── .env                    # Environment config (do not commit)
+│   ├── .env                    # Environment config (git-ignored)
 │   └── .env.example            # Environment template
 │
-└── README.md
+├── render.yaml                 # Render Infrastructure-as-Code deployment config
+├── vercel.json                 # Vercel static frontend deployment config
+├── Procfile                    # Heroku / Railway backend process definition
+├── netlify.toml                # Netlify deployment fallback config
+├── .gitignore                  # Git ignore rules
+└── README.md                   # Full documentation & deployment guide
 ```
 
 ---
 
 ## 🚀 Quick Start (Local)
 
-### Option A — Full Stack (Backend + Frontend)
-
-**Run the backend** (also serves the frontend at `http://localhost:3000`):
+### Full Stack Mode (Backend serves Frontend on port 3000)
 
 ```bash
 cd backend
 python server.py
 ```
 
-Then open: **[http://localhost:3000](http://localhost:3000)**
+Open: **[http://localhost:3000](http://localhost:3000)**
 
 ---
 
-### Option B — Frontend Only (Static)
+## ☁️ Cloud Deployment Guide
+
+### 1. Push to GitHub
+
+1. Create a new repository on [GitHub](https://github.com/new) named `weather-app` (public or private, without initializing README).
+2. Run these commands from the `WeatherApp` directory:
 
 ```bash
-cd frontend
-python -m http.server 3000
+git remote add origin https://github.com/saintedit/weather-app.git
+git branch -M main
+git push -u origin main
 ```
-
-> **Note:** In static mode, registration and login fall back to `localStorage` automatically. The weather API calls go directly to Open-Meteo from the browser — zero config required.
 
 ---
 
-## 🌐 API Endpoints (Backend)
+### 2. Deploy Backend to Render
+
+1. Sign in to [Render](https://dashboard.render.com/).
+2. Click **New +** → **Web Service**.
+3. Connect your GitHub repository (`weather-app`).
+4. Set the following settings:
+   - **Name**: `aura-weather-backend`
+   - **Root Directory**: `.` (or leave blank)
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install -r backend/requirements.txt`
+   - **Start Command**: `python backend/server.py`
+   - **Instance Type**: `Free`
+5. In **Environment Variables**, add:
+   - `PORT`: `10000`
+   - `ENVIRONMENT`: `production`
+   - `SECRET_KEY`: `your_random_secret_key`
+6. Click **Create Web Service**.
+7. Render will provide a live URL, e.g.:  
+   `https://aura-weather-backend.onrender.com`
+
+> **Note**: Test your backend health at `https://aura-weather-backend.onrender.com/api/health`.
+
+---
+
+### 3. Deploy Frontend to Vercel
+
+1. Sign in to [Vercel](https://vercel.com/).
+2. Click **Add New…** → **Project**.
+3. Import your `weather-app` GitHub repository.
+4. In **Project Configuration**:
+   - **Framework Preset**: `Other`
+   - **Root Directory**: Click *Edit* and select **`frontend`**
+   - **Build and Output Settings**: Leave defaults (no build command needed)
+5. Click **Deploy**.
+6. Vercel will give you a live production URL, e.g.:  
+   `https://weather-app-xyz.vercel.app`
+
+---
+
+### 4. Connect Frontend to Render Backend
+
+Once both are deployed, link your frontend to your Render backend:
+
+**Option A (Recommended — Edit `frontend/config.js`):**
+In `frontend/config.js`, set your Render URL:
+```javascript
+window.AURA_API_BASE = 'https://aura-weather-backend.onrender.com';
+```
+Commit and push:
+```bash
+git add frontend/config.js
+git commit -m "Configure Render backend URL for Vercel deployment"
+git push
+```
+Vercel will redeploy automatically within seconds!
+
+**Option B (Vercel Rewrites):**
+In `vercel.json` at root:
+```json
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://aura-weather-backend.onrender.com/api/:path*"
+    }
+  ]
+}
+```
+
+---
+
+## 🌐 Backend REST API Reference
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/health` | Server health check |
-| `POST` | `/api/auth/register` | Create a new user account |
-| `POST` | `/api/auth/login` | Authenticate & receive session token |
-| `POST` | `/api/auth/logout` | Invalidate session token |
-| `GET` | `/api/auth/me` | Get current authenticated user |
+| `GET` | `/api/health` | Server health check & uptime |
+| `POST` | `/api/auth/register` | Create user account |
+| `POST` | `/api/auth/login` | Authenticate & get session token |
+| `POST` | `/api/auth/logout` | Invalidate session |
+| `GET` | `/api/auth/me` | Current user info from Bearer token |
 | `GET` | `/api/weather/forecast` | Proxied Open-Meteo forecast (5-min cache) |
-| `GET` | `/api/weather/air-quality` | Proxied air quality data (10-min cache) |
+| `GET` | `/api/weather/air-quality` | Air quality data (10-min cache) |
 | `GET` | `/api/weather/search` | Geocoding city search (1-hr cache) |
-| `GET` | `/api/weather/reverse` | Reverse geocoding by GPS coordinates |
-
-**Example request:**
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Alex", "email": "alex@example.com", "password": "mypassword"}'
-```
+| `GET` | `/api/weather/reverse` | Reverse geocode by GPS coordinates |
 
 ---
 
-## 📱 Features
+## 📱 Core Features
 
-- ✅ **Fully Responsive** — Mobile (360px), tablet, and desktop layouts
-- ✅ **New Visitor Onboarding** — Automatically routes first-time visitors to Registration
-- ✅ **Live Weather** — Real-time data: temperature, humidity, UV index, wind, AQI, 7-day forecast
-- ✅ **City Search** — Autocomplete geocoding search with 190+ country coverage
-- ✅ **GPS Location** — One-tap current location detection
-- ✅ **Unit Toggle** — Switch between °C and °F
-- ✅ **User Accounts** — Secure PBKDF2-SHA256 hashed passwords, persistent sessions
-- ✅ **Guest Mode** — Skip registration and explore instantly
-- ✅ **Weather Caching** — Backend TTL cache reduces redundant API calls
-- ✅ **Zero API Keys** — Powered entirely by free Open-Meteo APIs
-
----
-
-## ☁️ Deployment
-
-### Frontend (Netlify / Vercel / GitHub Pages)
-
-Deploy the **`frontend/`** folder as a static site:
-
-```bash
-# Netlify CLI
-netlify deploy --dir=frontend --prod
-
-# Vercel CLI
-vercel frontend/
-```
-
-### Backend (Railway / Render / any VPS)
-
-```bash
-cd backend
-pip install -r requirements.txt
-python server.py
-```
-
-For production with **gunicorn** (Linux/Mac):
-```bash
-gunicorn --bind 0.0.0.0:3000 --workers 4 server:AuraRequestHandler
-```
-
----
-
-## 🔐 Environment Variables
-
-Copy `backend/.env.example` to `backend/.env` and configure:
-
-```env
-PORT=3000
-SECRET_KEY=your_secret_key_here
-DATABASE_PATH=database.sqlite
-WEATHER_CACHE_TTL_SECONDS=300
-```
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | HTML5, Tailwind CSS (CDN), Vanilla JavaScript |
-| Backend | Python 3.10+ Standard Library (no frameworks) |
-| Database | SQLite (via Python `sqlite3`) |
-| Weather API | [Open-Meteo](https://open-meteo.com/) (free, no key) |
-| Fonts | Plus Jakarta Sans, Material Symbols |
+- ✅ **Full Responsiveness**: Seamless layout from 360px smartphones to 4K displays.
+- ✅ **Automatic Onboarding**: First-time visitors automatically start on Registration.
+- ✅ **Live Meteorological Telemetry**: Real-time Open-Meteo data (humidity, UV, wind compass, AQI, 7-day daily forecast).
+- ✅ **City Search & GPS Locate**: Global geocoding across 190+ countries with one-tap device location.
+- ✅ **Dynamic Horizon**: 6-hour dynamic slider that reflects conditions (rain animation activates on actual rain).
+- ✅ **User Accounts & Guest Mode**: Password hashing with PBKDF2-SHA256, session tokens, or 1-click guest preview.
+- ✅ **Graceful Offline Fallback**: Frontend works statically with local storage even without the backend.
 
 ---
 
 ## 📄 License
 
-MIT — feel free to fork, modify, and deploy.
+MIT — Created with Antigravity & Google Stitch.
