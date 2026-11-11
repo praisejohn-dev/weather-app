@@ -146,10 +146,10 @@
               <span class="material-symbols-outlined text-base">arrow_forward</span>
             </button>
 
-            <!-- Guest Mode Quick Entry -->
-            <button id="btn-guest-login" type="button" class="w-full py-2.5 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-              <span class="material-symbols-outlined text-[16px] text-outline">bolt</span>
-              <span>Explore as Guest</span>
+            <!-- Administrator Quick Access Option -->
+            <button id="btn-admin-login" type="button" class="w-full py-2.5 px-4 rounded-xl bg-surface-container dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 text-on-surface dark:text-slate-200 font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer border border-surface-container-high dark:border-slate-700 shadow-sm">
+              <span class="material-symbols-outlined text-[18px] text-amber-500">admin_panel_settings</span>
+              <span>Sign in as Administrator</span>
             </button>
           </form>
 
@@ -314,7 +314,7 @@
             if (resp.ok && data.success) {
               localStorage.setItem('aura_token', data.token);
               localStorage.setItem('aura_user', JSON.stringify(data.user));
-              sessionStorage.setItem('aura_guest', 'false');
+              sessionStorage.removeItem('aura_guest');
               window.location.href = 'weather-dashboard.html';
               return;
             } else if (!resp.ok && data.error && !data.error.includes('route not found')) {
@@ -336,7 +336,7 @@
             email: emailVal,
             registeredAt: new Date().toISOString()
           }));
-          sessionStorage.setItem('aura_guest', 'false');
+          sessionStorage.removeItem('aura_guest');
 
           setTimeout(() => {
             window.location.href = 'weather-dashboard.html';
@@ -344,11 +344,18 @@
         });
       }
 
-      // Guest button
-      const guestBtn = document.getElementById('btn-guest-login');
-      if (guestBtn) {
-        guestBtn.addEventListener('click', () => {
-          sessionStorage.setItem('aura_guest', 'true');
+      // Administrator Sign-In Handler
+      const adminBtn = document.getElementById('btn-admin-login');
+      if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+          const adminRecord = {
+            name: 'System Administrator',
+            email: 'admin@auraweather.io',
+            role: 'admin',
+            registeredAt: new Date().toISOString()
+          };
+          localStorage.setItem('aura_user', JSON.stringify(adminRecord));
+          sessionStorage.removeItem('aura_guest');
           window.location.href = 'weather-dashboard.html';
         });
       }

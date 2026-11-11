@@ -7,8 +7,7 @@
   <script>
     (function () {
       const auraUser = localStorage.getItem('aura_user');
-      const auraGuest = sessionStorage.getItem('aura_guest');
-      if (auraUser || auraGuest) {
+      if (auraUser) {
         window.location.replace('weather-dashboard.html');
       } else {
         window.location.replace('registration.html');

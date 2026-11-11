@@ -38,6 +38,15 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     """)
+    # Auto-seed default Admin account if not present
+    cursor.execute("SELECT id FROM users WHERE email = 'admin@auraweather.io'")
+    if not cursor.fetchone():
+        hashed, salt = hash_password("admin123")
+        now = datetime.utcnow().isoformat()
+        cursor.execute(
+            "INSERT INTO users (name, email, password_hash, salt, created_at) VALUES (?, ?, ?, ?, ?)",
+            ("System Administrator", "admin@auraweather.io", hashed, salt, now)
+        )
     conn.commit()
     conn.close()
 
