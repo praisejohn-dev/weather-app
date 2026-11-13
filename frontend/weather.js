@@ -380,19 +380,20 @@
       const isSelected = i === state.selectedDayIndex;
 
       const card = document.createElement('div');
-      // Responsive flex-shrink on mobile for horizontal swiping, grid cell on sm+
+      // Equal-width grid cell: fills the 7-col grid perfectly
       card.className = isSelected
-        ? 'flex-shrink-0 min-w-[95px] sm:min-w-0 bg-surface-container-lowest dark:bg-slate-800 rounded-2xl p-4 flex flex-col items-center justify-between text-center shadow-[0_8px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] ring-2 ring-primary dark:ring-primary-container border border-transparent dark:border-slate-700 cursor-pointer transition-all scale-[1.02]'
-        : 'flex-shrink-0 min-w-[95px] sm:min-w-0 bg-surface-container-lowest dark:bg-slate-800/80 rounded-2xl p-4 flex flex-col items-center justify-between text-center shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] border border-transparent dark:border-slate-700/50 hover:dark:bg-slate-800 transition-all cursor-pointer group';
+        ? 'bg-primary/10 dark:bg-slate-700 rounded-2xl px-1 py-3 flex flex-col items-center gap-1.5 text-center ring-2 ring-primary dark:ring-sky-400 border border-primary/20 dark:border-sky-500/40 shadow-md cursor-pointer transition-all duration-200 select-none'
+        : 'bg-surface-container-lowest dark:bg-slate-800/70 hover:bg-surface-container dark:hover:bg-slate-700/80 rounded-2xl px-1 py-3 flex flex-col items-center gap-1.5 text-center border border-transparent dark:border-slate-700/40 shadow-sm hover:shadow-md cursor-pointer transition-all duration-200 select-none group';
 
       card.innerHTML = `
-        <span class="font-body-sm text-body-sm ${isSelected ? 'font-bold text-on-surface dark:text-white' : 'font-semibold text-outline dark:text-slate-400 group-hover:text-on-surface dark:group-hover:text-white transition-colors'}">${dayLabel}</span>
-        <div class="my-3 w-10 h-10 rounded-full flex items-center justify-center ${info.isRain ? 'bg-primary-container/15 text-primary dark:bg-primary-container/30 dark:text-primary-fixed' : 'bg-amber-100 text-amber-500 dark:bg-amber-950/40 dark:text-amber-400'}">
-          <span class="material-symbols-outlined text-[24px]">${info.icon}</span>
+        <span class="text-[11px] sm:text-xs font-bold tracking-wide leading-tight ${isSelected ? 'text-primary dark:text-sky-300' : 'text-outline dark:text-slate-400 group-hover:text-on-surface dark:group-hover:text-slate-100 transition-colors'}">${dayLabel}</span>
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${info.isRain ? 'bg-sky-100 text-sky-600 dark:bg-sky-900/50 dark:text-sky-300' : 'bg-amber-50 text-amber-500 dark:bg-amber-900/30 dark:text-amber-300'}">
+          <span class="material-symbols-outlined text-[20px] sm:text-[22px]">${info.icon}</span>
         </div>
-        <div class="flex items-center gap-1.5 font-label-sm text-label-sm">
-          <span class="font-semibold text-on-surface dark:text-white">${maxT}°</span>
-          <span class="text-outline dark:text-slate-400">${minT}°</span>
+        <span class="text-[9px] sm:text-[10px] font-semibold leading-tight text-center px-0.5 ${isSelected ? 'text-on-surface dark:text-slate-100' : 'text-on-surface-variant dark:text-slate-300'}" style="line-height:1.2">${info.text}</span>
+        <div class="flex flex-col items-center gap-0">
+          <span class="text-[11px] sm:text-xs font-bold ${isSelected ? 'text-on-surface dark:text-white' : 'text-on-surface dark:text-slate-100'}">${maxT}°</span>
+          <span class="text-[10px] sm:text-[11px] font-medium text-outline dark:text-slate-500">${minT}°</span>
         </div>
       `;
 
@@ -426,12 +427,12 @@
       const precip = hourly.precipitation_probability ? hourly.precipitation_probability[i] : 0;
 
       const slot = document.createElement('div');
-      slot.className = 'flex-shrink-0 min-w-[85px] sm:min-w-0 flex flex-col items-center py-2.5 px-2 rounded-xl bg-surface-container-low dark:bg-slate-800/90 text-center shadow-sm border border-transparent dark:border-slate-700/50';
+      slot.className = 'flex-shrink-0 min-w-[80px] sm:min-w-0 flex flex-col items-center py-2.5 px-2 rounded-xl bg-surface-container-low dark:bg-slate-800 text-center shadow-sm border border-transparent dark:border-slate-700/60';
       slot.innerHTML = `
-        <span class="font-label-xs text-label-xs text-outline dark:text-slate-400 font-medium">${hourStr}</span>
-        <span class="material-symbols-outlined text-[22px] my-1 ${info.isRain ? 'text-primary dark:text-primary-fixed' : 'text-amber-500 dark:text-amber-400'}">${info.icon}</span>
-        <span class="font-label-sm text-label-sm font-bold text-on-surface dark:text-white">${temp}°</span>
-        <span class="text-[11px] text-outline dark:text-slate-400 mt-0.5">${precip}% rain</span>
+        <span class="text-[11px] font-semibold text-outline dark:text-slate-400">${hourStr}</span>
+        <span class="material-symbols-outlined text-[22px] my-1 ${info.isRain ? 'text-sky-500 dark:text-sky-300' : 'text-amber-500 dark:text-amber-300'}">${info.icon}</span>
+        <span class="text-[11px] font-bold text-on-surface dark:text-white">${temp}°</span>
+        <span class="text-[10px] text-outline dark:text-slate-400 mt-0.5">${precip}%</span>
       `;
       drawer.appendChild(slot);
     }
