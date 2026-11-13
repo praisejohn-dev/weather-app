@@ -193,11 +193,6 @@
               <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
 
-            <!-- Administrator Quick Access Option -->
-            <button id="btn-admin-access" type="button" class="w-full py-2.5 px-4 bg-surface-container dark:bg-slate-800 hover:bg-surface-container-high dark:hover:bg-slate-700 text-on-surface dark:text-slate-200 font-semibold text-xs sm:text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer border border-surface-container-high dark:border-slate-700 shadow-sm">
-              <span class="material-symbols-outlined text-[18px] text-amber-500">admin_panel_settings</span>
-              <span>Sign in with Administrator Account</span>
-            </button>
           </div>
         </form>
 
@@ -493,21 +488,6 @@
         }, 400);
       });
 
-      // 4. Sign in with Administrator Account
-      const adminBtn = document.getElementById('btn-admin-access');
-      if (adminBtn) {
-        adminBtn.addEventListener('click', () => {
-          const adminRecord = {
-            name: 'System Administrator',
-            email: 'admin@auraweather.io',
-            role: 'admin',
-            registeredAt: new Date().toISOString()
-          };
-          localStorage.setItem('aura_user', JSON.stringify(adminRecord));
-          sessionStorage.removeItem('aura_guest');
-          window.location.href = 'weather-dashboard.html';
-        });
-      }
     })();
   </script>
 </body>
